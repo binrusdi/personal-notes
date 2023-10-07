@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+import InputNote from "./InputNoteApp";
 import {getInitialData, showFormattedDate} from './../utils/index'
 
 export default function DisplayNote() {
-    const [artikel, setArtikel] = useState(getInitialData());
-
+    const [artikel, setArtikel] = useState(getInitialData);
+    
     return (
         <div className="app-note__display-body">
             {artikel.map(art=>(
