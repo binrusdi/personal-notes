@@ -67,8 +67,37 @@ form {
 }
 
 .note-list {
+  gap: 5px;
   display: grid;
   padding: 2rem;
   grid-template-columns: repeat(3, 1fr);
 }
 
+article {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid palevioletred;
+}
+
+article > span {
+  color: #aaa;
+  font-size: small;
+}
+
+article p {
+  margin-top: 5px;
+}
+
+h2:nth-child(3) {
+  text-align: center;
+}
+
+button {
+  width: max-content;
+}
+
+#notif {
+  font-weight: bold;
+  text-align: center;
+  color: red;
+}

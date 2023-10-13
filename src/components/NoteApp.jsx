@@ -4,9 +4,9 @@ import {getInitialData, showFormattedDate} from './../utils/index'
 
 export default function NoteApp() {
     const [listNote, setListNote] = useState(getInitialData());
-    const [title, setTitle] = useState(getInitialData);
+    const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
-    const maxTitle = 30;
+    const maxTitle = 50;
     
     function onSubmit(e) {
         e.preventDefault();
@@ -15,19 +15,20 @@ export default function NoteApp() {
             id: +new Date(),
             title: title,
             body: body,
-            createdAt: new Date().toISOString(),
+            createdAt: showFormattedDate(new Date()),
             archived: false,
         };
 
-        setListNote([...listNote, ...newListNote])
+        setListNote([...listNote, newListNote])
+        console.table(listNote);
 
+        setTitle('');
+        setBody('');
     }
     function handleTitleChange(e) {
         const inputValue = e.target.value;
         if (inputValue.length <= maxTitle) {
-            
             setTitle(inputValue);
-
         }
     }
 
@@ -38,12 +39,14 @@ export default function NoteApp() {
         <div className="container">
             <Header />
             <InputNote
+                title={title}
+                body={body}
+                maxTitle={maxTitle}
                 handleTitleChange={handleTitleChange}
                 handleBodyChange={handleBodyChange}
                 onChangeSubmit={onSubmit}
-                maxTitle={maxTitle}
             />
-            <DisplayNote listNote={listNote}/>
+            <DisplayNote listNote={listNote} setListNote={setListNote}/>
         </div>
     );
 }
@@ -70,14 +73,15 @@ function ButtonSearch() {
 function InputNote({title, body , maxTitle, handleTitleChange, handleBodyChange, onChangeSubmit}) {
     return (
         <div className="note-input">
-            <form>
+            <form onSubmit={onChangeSubmit} >
                 <h2>Buat catatan</h2>
-                <h3>SIsa karakter : {maxTitle}</h3>
+                <h3>SIsa karakter : {maxTitle - title.length}</h3>
                 <input
                     type="text"
                     id="judul"
                     value={title}
                     onChange={handleTitleChange}
+                    placeholder="Masukan judul..."
                 />
                 <textarea
                     cols="30"
@@ -85,26 +89,44 @@ function InputNote({title, body , maxTitle, handleTitleChange, handleBodyChange,
                     id="note-field"
                     value={body}
                     onChange={handleBodyChange}
+                    placeholder="Masukan catatan..."
                 ></textarea>
                 <input
                     type="submit"
                     value="Simpan"
-                    onClick={onChangeSubmit}
                 />
             </form>
         </div>
     );
 }
 
-function DisplayNote({listNote}) {
+function DisplayNote({listNote, setListNote}) {
+    const handleNoteDelete = (id) => {
+        const updateedNotes = listNote.filter(note => note.id !== id);
+        setListNote(updateedNotes);
+    }
+    const renderNotes = () => {
+        
+        if (listNote.length === 0) {
+            return <p id="notif">Tidak ada catatan/Catatan tidak ditemukan</p>
+        } else {
+        return listNote.map(note =>
+            <article key={note.id}>
+                <h2>{note.title}</h2>
+                <span>{note.createdAt}</span>
+                <p>{note.body}</p>
+                <button onClick={() => handleNoteDelete(note.id)}>Delete</button>
+            </article>
+            );
+        }
+    };
     
-    const notes = listNote.map(note =>
-        <article key={note.id}>
-            <h2>{note.title}</h2>
-            <p>{note.body}</p>
-            <span>{note.createdAt}</span>
-        </article>
+    return (
+        <>
+        <h2>Catatan Aktif</h2>
+        <div className="note-list">
+            {renderNotes()}
+        </div>
+        </>
     );
-
-    return <div className="note-list">{notes}</div>;
 }
